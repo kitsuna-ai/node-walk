@@ -50,7 +50,7 @@ function walkDFS(root, action, traceSymlink=false) {
             stat = fs.lstatSync(abspath)
         }
         
-        if(stat.isDirectory) {
+        if(stat.isDirectory()) {
             dirs.push(file)
         }
         else if(stat.isFile()) {
@@ -67,15 +67,16 @@ function walkDFS(root, action, traceSymlink=false) {
 /**
  * Walk through path breadth first searching method.
  * @param {string} root
- * @param {(root: string, dirs: string[], files: string[]) => void} action 
- * @param {boolean} [traceSymlink=false]
- * @param {boolean} [DFS=false]
+ * @param {(boolean|(root: string, dirs: string[], files: string[]) => void)} arg1 Use DFS walk|Walk action
+ * @param {(boolean|(root: string, dirs: string[], files: string[]) => void)} arg2 Trace symlink or not|Walk action
+ * @param {boolean} [arg3] trace symlink or not
  */
-module.exports = (root, action, traceSymlink=false, DFS=false) => {
-    if(DFS) {
-        walkDFS(root, action, traceSymlink)
+module.exports = (root, arg1, arg2, arg3) => {
+    if(typeof arg1 == 'boolean') {
+        if(arg1) walkDFS(root, arg2, arg3)
+        else walkBFS(root, arg2, arg3)
     }
     else {
-        walkBFS(root, action, traceSymlink)
+        walkBFS(root, arg1, arg2)
     }
 }
